@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="com.imminentmeals.android.newsreader"
+    android:versionCode="1"
+    android:versionName="1.0" >
+
+    <uses-sdk
+        android:minSdkVersion="14"
+        android:targetSdkVersion="17" />
+    <supports-screens 
+        android:smallScreens="true"
+        android:normalScreens="true"
+        android:largeScreens="true"
+        android:xlargeScreens="true" />
+
+    <application
+        android:name="NewsReaderSegueController"
+        android:allowBackup="true"
+        android:icon="@drawable/icon"
+        android:label="@string/app_name"
+        android:logo="@drawable/logo"
+        android:theme="@style/Theme.NewsReader" >
+        <activity
+            android:name=".presentation.framework.NewsReaderActivity"
+            android:label="@string/app_name"
+            android:theme="@style/Theme.NewsReader.Main" >
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+        <activity
+            android:name=".presentation.framework.ArticleActivity"
+            android:parentActivityName=".presentation.framework.NewsReaderActivity"
+            android:theme="@style/Theme.NewsReader_NoActionBar" />
+    </application>
+</manifest>
