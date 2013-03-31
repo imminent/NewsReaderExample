@@ -21,9 +21,9 @@ import com.squareup.otto.Subscribe;
  * @author Dandre Allison
  */
 /* package */class _NewsReaderController implements NewsReaderController, Messages.NewsReaderPresentation {
-	@Inject @Named(Controller.BUS)/* package */Bus bus;
 	
-	/* package */_NewsReaderController() {
+	@Inject
+	/* package */_NewsReaderController(@Named(Controller.BUS)Bus bus) {
 		bus.register(this);
 	}
 

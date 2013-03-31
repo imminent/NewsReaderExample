@@ -1,7 +1,12 @@
 package com.imminentmeals.android.newsreader.controller.implementation;
 
+import javax.inject.Named;
+import javax.inject.Singleton;
+
 import com.imminentmeals.android.newsreader.controller.ArticleController;
+import com.imminentmeals.android.newsreader.controller.Controller;
 import com.imminentmeals.android.newsreader.controller.NewsReaderController;
+import com.squareup.otto.Bus;
 
 import dagger.Module;
 import dagger.Provides;
@@ -18,11 +23,15 @@ import dagger.Provides;
 		complete = false
 )
 public class ControllerImplementationModule {
-	@Provides NewsReaderController provideNewsReaderController() {
-		return new _NewsReaderController();
+	@Provides NewsReaderController provideNewsReaderController(@Named(Controller.BUS) Bus bus) {
+		return new _NewsReaderController(bus);
 	}
 	
-	@Provides ArticleController provideArticleController() {
-		return new _ArticleController();
+	@Provides ArticleController provideArticleController(@Named(Controller.BUS) Bus bus) {
+		return new _ArticleController(bus);
+	}
+	
+	@Provides @Singleton @Named(Controller.BUS) Bus provideControllerBus() {
+		return new Bus(Controller.BUS);
 	}
 }

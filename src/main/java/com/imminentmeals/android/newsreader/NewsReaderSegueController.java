@@ -46,6 +46,8 @@ public class NewsReaderSegueController extends Application implements Applicatio
 		
 		final ObjectGraph object_graph = ObjectGraph.create(new ModeViewControllerModule());
 		object_graph.inject(this);
+		
+		_controllers = new HashMap<Activity, Object>();
 	}
 
 /* Activity Lifecycle Callbacks */

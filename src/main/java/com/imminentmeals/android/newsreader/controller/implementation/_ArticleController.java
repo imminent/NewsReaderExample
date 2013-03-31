@@ -18,9 +18,9 @@ import com.squareup.otto.Subscribe;
  * @author Dandre Allison
  */
 /* package */class _ArticleController implements ArticleController, Messages.ArticlePresentation {
-	@Inject @Named(Controller.BUS)/* package */Bus bus;
-	
-	/* package */_ArticleController() {
+
+	@Inject
+	/* package */_ArticleController(@Named(Controller.BUS) Bus bus) {
 		bus.register(this);
 	}
 
