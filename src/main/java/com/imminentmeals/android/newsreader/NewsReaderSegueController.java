@@ -18,7 +18,7 @@ import com.imminentmeals.android.newsreader.controller.Controller;
 import com.imminentmeals.android.newsreader.controller.NewsReaderController;
 import com.imminentmeals.android.newsreader.controller.implementation.ControllerImplementationModule;
 import com.imminentmeals.android.newsreader.presentation.Presentation;
-import com.imminentmeals.android.newsreader.presentation.DataProtocol;
+import com.imminentmeals.android.newsreader.presentation.HasProtocol;
 import com.imminentmeals.android.newsreader.presentation.framework.ArticleActivity;
 import com.imminentmeals.android.newsreader.presentation.framework.NewsReaderActivity;
 import com.squareup.otto.Bus;
@@ -66,7 +66,7 @@ public class NewsReaderSegueController extends Application implements Applicatio
 					+ " doesn't have a Controller specified in NewsReaderSequeController.");
 		controller.attachPresentation((Presentation) activity);
 		// Registers the Controller as the Presentations Protocol implementation
-		DataProtocol annotation = activity.getClass().getAnnotation(DataProtocol.class);
+		HasProtocol annotation = activity.getClass().getAnnotation(HasProtocol.class);
 		if (annotation != null) {
 			Class<?> protocol = annotation.value();
 			

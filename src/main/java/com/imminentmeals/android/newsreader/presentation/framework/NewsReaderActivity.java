@@ -18,7 +18,7 @@ import com.imminentmeals.android.newsreader.R.id;
 import com.imminentmeals.android.newsreader.R.layout;
 import com.imminentmeals.android.newsreader.model.NewsArticle;
 import com.imminentmeals.android.newsreader.model.NewsCategory;
-import com.imminentmeals.android.newsreader.presentation.DataProtocol;
+import com.imminentmeals.android.newsreader.presentation.HasProtocol;
 import com.imminentmeals.android.newsreader.presentation.Messages.NewsReaderPresentation.CategorySelected;
 import com.imminentmeals.android.newsreader.presentation.Messages.NewsReaderPresentation.WillCreatePresentation;
 import com.imminentmeals.android.newsreader.presentation.Messages.NewsReaderPresentation.WillRestorePresentation;
@@ -40,7 +40,7 @@ import com.imminentmeals.android.newsreader.presentation.NewsReaderPresentation;
  * side and an {@ArticleFragment} on the right side. When the user selects a
  * headline on the left, the corresponding article is shown on the right.
  */
-@DataProtocol(NewsReaderPresentation.Protocol.class)
+@HasProtocol(NewsReaderPresentation.Protocol.class)
 public class NewsReaderActivity extends Activity implements NewsReaderPresentation, 
                                                             NewsReaderNavigationCallback {
 	@InjectView(id.article) /* package */View article;
