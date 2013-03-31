@@ -1,7 +1,5 @@
 package com.imminentmeals.android.newsreader.controller.implementation;
 
-import javax.inject.Singleton;
-
 import com.imminentmeals.android.newsreader.controller.ArticleController;
 import com.imminentmeals.android.newsreader.controller.NewsReaderController;
 
@@ -20,11 +18,11 @@ import dagger.Provides;
 		complete = false
 )
 public class ControllerImplementationModule {
-	@Provides @Singleton NewsReaderController provideNewsReaderController() {
+	@Provides NewsReaderController provideNewsReaderController() {
 		return new _NewsReaderController();
 	}
 	
-	@Provides @Singleton ArticleController provideArticleController() {
+	@Provides ArticleController provideArticleController() {
 		return new _ArticleController();
 	}
 }

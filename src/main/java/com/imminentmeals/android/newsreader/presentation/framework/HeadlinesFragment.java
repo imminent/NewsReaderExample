@@ -1,5 +1,7 @@
 package com.imminentmeals.android.newsreader.presentation.framework;
 
+import static com.imminentmeals.android.newsreader.NewsReaderSegueController.sendMessage;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -7,7 +9,6 @@ import android.app.Activity;
 import android.app.ListFragment;
 import android.graphics.Typeface;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
@@ -15,9 +16,7 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 import com.imminentmeals.android.newsreader.R.layout;
-import com.imminentmeals.android.newsreader.controller.Controller;
 import com.imminentmeals.android.newsreader.model.NewsCategory;
-import com.imminentmeals.android.newsreader.presentation.Presentation;
 import com.imminentmeals.android.newsreader.presentation.Messages.NewsReaderPresentation.HeadlineSelected;
 
 /**
@@ -60,16 +59,11 @@ public class HeadlinesFragment extends ListFragment {
 	public void onAttach(Activity activity) {
 		super.onAttach(activity);
 		redacted_font = Typeface.createFromAsset(activity.getAssets(), "fonts/redacted-script-light.ttf");
-		if (activity instanceof Presentation)
-			_controller = ((Presentation) activity).controller();
-		else
-			Log.w(getTag(), "Attached to an Activity that doesn't implement Presentation, but probably should implement.");
 	}
 	
 	@Override
 	public void onListItemClick(ListView l, View v, int position, long id) {
-		if (_controller != null)
-			_controller.sendMessage(new HeadlineSelected(position));
+		sendMessage(this, new HeadlineSelected(position));
 	}
 
 /* Public API */
@@ -92,6 +86,5 @@ public class HeadlinesFragment extends ListFragment {
 	private List<String> _headlines = new ArrayList<String>();
 	// The list adapter for the list we are displaying
 	private ArrayAdapter<String> _headlines_adapter;
-	private Controller _controller;
 	/* inner-class */Typeface redacted_font;
 }

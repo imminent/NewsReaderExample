@@ -1,12 +1,16 @@
 package com.imminentmeals.android.newsreader;
 
+import java.util.HashMap;
+
 import javax.inject.Inject;
+import javax.inject.Named;
+import javax.inject.Provider;
 
 import android.app.Activity;
 import android.app.Application;
+import android.app.Fragment;
 import android.os.Bundle;
 import android.os.StrictMode;
-import android.util.Log;
 import butterknife.Views;
 
 import com.imminentmeals.android.newsreader.controller.ArticleController;
@@ -14,10 +18,11 @@ import com.imminentmeals.android.newsreader.controller.Controller;
 import com.imminentmeals.android.newsreader.controller.NewsReaderController;
 import com.imminentmeals.android.newsreader.controller.implementation.ControllerImplementationModule;
 import com.imminentmeals.android.newsreader.presentation.Presentation;
+import com.imminentmeals.android.newsreader.presentation.DataProtocol;
 import com.imminentmeals.android.newsreader.presentation.framework.ArticleActivity;
 import com.imminentmeals.android.newsreader.presentation.framework.NewsReaderActivity;
+import com.squareup.otto.Bus;
 
-import dagger.Lazy;
 import dagger.Module;
 import dagger.ObjectGraph;
 
@@ -26,9 +31,11 @@ import dagger.ObjectGraph;
  * @author Dandre Allison
  */
 public class NewsReaderSegueController extends Application implements Application.ActivityLifecycleCallbacks {
-	@Inject /* package */Lazy<NewsReaderController> news_reader_controller; 
-	@Inject /* package */Lazy<ArticleController> article_controller;
+	@Inject /* package */Provider<NewsReaderController> news_reader_controller; 
+	@Inject /* package */Provider<ArticleController> article_controller;
+	@Inject @Named(Controller.BUS)/* package */Bus controller_bus;
 
+/* Lifecycle */
 	@Override
 	public void onCreate() {
 		if (BuildConfig.DEBUG)
@@ -47,15 +54,27 @@ public class NewsReaderSegueController extends Application implements Applicatio
 		Views.inject(activity);
 		if (!(activity instanceof Presentation)) return;
 		
+		final Controller controller;
 		if (activity instanceof NewsReaderActivity)
-			_controller = news_reader_controller.get();
+			controller = news_reader_controller.get();
 		else if (activity instanceof ArticleActivity)
-			_controller = article_controller.get();
+			controller = article_controller.get();
 		else
-			throw new IllegalArgumentException("Activity " + activity + " doesn't have a Controller specified.");
-		_controller.attachPresentation((Presentation) activity);
-		((Presentation) activity).attachController(_controller);
-		if (BuildConfig.DEBUG) Log.v("order check", "ActivityLifecyleCallbacks.onActivityCreated()");
+			throw new IllegalArgumentException("Activity " + activity.getClass().getName() 
+					+ " doesn't have a Controller specified in NewsReaderSequeController.");
+		controller.attachPresentation((Presentation) activity);
+		// Registers the Controller as the Presentations Protocol implementation
+		DataProtocol annotation = activity.getClass().getAnnotation(DataProtocol.class);
+		if (annotation != null) {
+			Class<?> protocol = annotation.value();
+			
+			assert protocol.isInterface();
+			if (protocol.isInstance(controller)) 
+				_controllers.put(activity, controller);
+			else
+				throw new IllegalArgumentException("Controller for" + activity.getClass().getName()
+						+ " doesn't implement expected Protocol: " + protocol.getName()); 
+		}
 	}
 
 	@Override
@@ -76,6 +95,54 @@ public class NewsReaderSegueController extends Application implements Applicatio
 	@Override
 	public void onActivityStopped(Activity activity) { }
 	
+/* SequeController Contract */
+	@SuppressWarnings("unchecked")
+	public static <T, U extends Activity & Presentation> T controller(U presentation) {
+		final T controller;
+		try {
+			controller = (T) ((NewsReaderSegueController) presentation.getApplication())._controllers.get(presentation);
+		} catch (ClassCastException _) {
+			throw new IllegalStateException("Controller for " + presentation.getClass().getName() 
+					+ " doesn't have a defined Protocol");
+		}
+		return controller;
+	}
+	
+	@SuppressWarnings("unchecked")
+	public static <T, U extends Activity & Presentation> T controller(Fragment presentation_fragment) {
+		final U presentation;
+		try {
+			presentation = (U) presentation_fragment.getActivity();
+		} catch(ClassCastException _) {
+			throw new IllegalArgumentException("Fragment " + presentation_fragment.getClass().getName()
+					+ " isn't attached to a Presentation");
+		}
+		if (presentation == null)
+			throw new IllegalStateException("Fragment " + presentation_fragment.getClass().getName()
+					+ " isn't attached to an Activity");			
+		 
+		return controller((U) presentation);
+	}
+
+	public static <T extends Activity & Presentation> void sendMessage(T presentation, Object message) {
+		((NewsReaderSegueController) presentation.getApplication()).controller_bus.post(message);
+	}
+	
+	@SuppressWarnings("unchecked")
+	public static <T extends Activity & Presentation> void sendMessage(Fragment presentation_fragment, Object message) {
+		final T presentation;
+		try {
+			presentation = (T) presentation_fragment.getActivity();
+		} catch(ClassCastException _) {
+			throw new IllegalArgumentException("Fragment " + presentation_fragment.getClass().getName()
+					+ " isn't attached to a Presentation");
+		}
+		if (presentation == null)
+			throw new IllegalStateException("Fragment " + presentation_fragment.getClass().getName()
+					+ " isn't attached to an Activity");	
+		sendMessage(presentation, message);
+	}
+	
 /* Dependency Inject Graph */
 	@Module(
 			entryPoints = {
@@ -87,5 +154,5 @@ public class NewsReaderSegueController extends Application implements Applicatio
 		
 	}
 	
-	private Controller _controller;
+	private HashMap<Activity, Object> _controllers;
 }

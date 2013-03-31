@@ -1,13 +1,15 @@
 package com.imminentmeals.android.newsreader.controller.implementation;
 
-import javax.inject.Singleton;
+import javax.inject.Inject;
+import javax.inject.Named;
 
 import com.imminentmeals.android.newsreader.controller.ArticleController;
+import com.imminentmeals.android.newsreader.controller.Controller;
 import com.imminentmeals.android.newsreader.model.NewsArticle;
 import com.imminentmeals.android.newsreader.model.NewsSource;
 import com.imminentmeals.android.newsreader.presentation.ArticlePresentation;
+import com.imminentmeals.android.newsreader.presentation.Messages;
 import com.imminentmeals.android.newsreader.presentation.Presentation;
-import com.imminentmeals.android.newsreader.presentation.Messages.ArticlePresentation.WillCreatePresentation;
 import com.squareup.otto.Bus;
 import com.squareup.otto.Subscribe;
 
@@ -15,12 +17,11 @@ import com.squareup.otto.Subscribe;
  *
  * @author Dandre Allison
  */
-@Singleton
-/* package */class _ArticleController implements ArticleController {
+/* package */class _ArticleController implements ArticleController, Messages.ArticlePresentation {
+	@Inject @Named(Controller.BUS)/* package */Bus bus;
 	
 	/* package */_ArticleController() {
-		_bus = new Bus("ArticleController");
-		_bus.register(this);
+		bus.register(this);
 	}
 
 	@Override
@@ -31,13 +32,8 @@ import com.squareup.otto.Subscribe;
 	}
 
 	@Override
-	public void sendMessage(Object message) {
-		_bus.post(message);
-	}
-
-	@Override
 	@Subscribe
-	public void didCreate(WillCreatePresentation message) {
+	public void willCreatePresentation(WillCreatePresentation message) {
 		if (message.has_two_panes) {
 			_presentation.stop();
 			return;
@@ -50,5 +46,4 @@ import com.squareup.otto.Subscribe;
 	}
 
 	private ArticlePresentation _presentation;
-	private final Bus _bus;
 }

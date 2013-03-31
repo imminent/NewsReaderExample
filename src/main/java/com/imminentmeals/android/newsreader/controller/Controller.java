@@ -7,8 +7,9 @@ import com.imminentmeals.android.newsreader.presentation.Presentation;
  * @author Dandre Allison
  */
 public interface Controller {
+	String BUS = "com.imminentmeals.android.newsreader.presentation.Presentation.BUS";
+
 	void attachPresentation(Presentation presentation);
-	void sendMessage(Object message);
 	
 	@SuppressWarnings("serial")
 	class IncompatiblePresentationException extends IllegalArgumentException {

@@ -9,9 +9,7 @@ import com.imminentmeals.android.newsreader.controller.Controller;
 public interface Presentation {
 	String EXTRA = "com.imminentmeals.android.newsreader.presentation.Extra.";
 	String KEY = "com.imminentmeals.android.newsreader.presentation.Key.";
-	void attachController(Controller _controller);
-	Controller controller();
-	
+		
 	@SuppressWarnings("serial")
 	class IncompatibleControllerException extends IllegalArgumentException {
 		

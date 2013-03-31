@@ -1,5 +1,7 @@
 package com.imminentmeals.android.newsreader.presentation;
 
+import com.squareup.otto.Subscribe;
+
 
 /**
  *
@@ -7,7 +9,10 @@ package com.imminentmeals.android.newsreader.presentation;
  */
 public class Messages {
 	
-	public static class ArticlePresentation {
+	public interface ArticlePresentation {
+		
+		@Subscribe
+		void willCreatePresentation(WillCreatePresentation message);
 		
 		public static class WillCreatePresentation {
 			public final boolean has_two_panes;
@@ -22,7 +27,18 @@ public class Messages {
 		}
 	}
 	
-	public static class NewsReaderPresentation {
+	public interface NewsReaderPresentation {
+		
+		@Subscribe 
+		void willCreatePresentation(WillCreatePresentation message);
+		@Subscribe 
+		void willRestorePresentation(WillRestorePresentation message);
+		@Subscribe 
+		void willStartPresentation(WillStartPresentation message);
+		@Subscribe 
+		void onCategorySelected(CategorySelected message);
+		@Subscribe 
+		void onHeadlineSelected(HeadlineSelected message);
 		
 		public static class WillCreatePresentation {
 			public final boolean has_two_panes;
